@@ -1,2 +1,2 @@
 # F-Mart
-An online portal to order various fruits from F-Mart.
+A Discord like application with django for study groups.
