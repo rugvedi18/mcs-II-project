@@ -4,12 +4,16 @@ from .models import Room
 
 
 def home(request):
+    rooms = Room.objects.all()
     template_name = 'base/home.html'
-    context = {}
+    context = {'rooms': rooms}
+
     return render(request, template_name, context)
 
 
-def room(request, id):
+def room(request, pk):
+    room = Room.objects.get(id=pk)
     template_name = 'base/room.html'
-    context = {}
+    context = {'room': room}
+
     return render(request, template_name, context)
