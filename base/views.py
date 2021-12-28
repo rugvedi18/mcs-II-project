@@ -130,7 +130,7 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
             return redirect('index')
 
     template_name = 'base/room_form.html'

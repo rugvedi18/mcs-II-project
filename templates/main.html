@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudyBuddy V1.0</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <!-- Custom CSS -->
+
 </head>
 
 <body>
@@ -14,7 +18,7 @@
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        <li>{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
