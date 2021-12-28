@@ -131,6 +131,8 @@ def createRoom(request):
         form = RoomForm(request.POST)
         if form.is_valid():
             room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('index')
 
     template_name = 'base/room_form.html'
