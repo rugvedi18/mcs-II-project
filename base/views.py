@@ -75,12 +75,14 @@ def home(request):
 
     topics = Topic.objects.all()
     room_count = rooms.count()
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
     template_name = 'base/home.html'
     context = {
         'rooms': rooms,
         'topics': topics,
         'room_count': room_count,
+        'room_messages': room_messages,
     }
 
     return render(request, template_name, context)
@@ -90,7 +92,7 @@ def room(request, pk):
     room = Room.objects.get(id=pk)
     # get all the msgs specific to the above room
     # the message is the Model name and _set.all() is set of msgs
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all()
     participants = room.participants.all()
 
     if request.method == 'POST':
@@ -105,6 +107,19 @@ def room(request, pk):
     template_name = 'base/room.html'
     context = {'room': room, 'room_messages': room_messages,
                'participants': participants}
+
+    return render(request, template_name, context)
+
+
+def userProfile(request, pk):
+    user = User.objects.get(id=pk)
+    rooms = user.room_set.all()  # get all the children of a object
+    room_messages = user.message_set.all()
+    topics = Topic.objects.all()
+
+    template_name = 'base/profile.html'
+    context = {'user': user, 'rooms': rooms,
+               'room_messages': room_messages, 'topics': topics}
 
     return render(request, template_name, context)
 
