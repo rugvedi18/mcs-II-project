@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
@@ -127,6 +128,7 @@ def userProfile(request, pk):
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm
+    topics = Topic.objects.all()
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
@@ -136,7 +138,7 @@ def createRoom(request):
             return redirect('index')
 
     template_name = 'base/room_form.html'
-    context = {'form': form}
+    context = {'form': form, 'topics': topics}
 
     return render(request, template_name, context)
 
@@ -145,18 +147,24 @@ def createRoom(request):
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
+    topics = Topic.objects.all()
 
     if request.user != room.host:
         return HttpResponse('You are not allowd here!!')
 
     if request.method == 'POST':
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name)
         form = RoomForm(request.POST, instance=room)
         if form.is_valid():
+
+            # 5.5.56
+
             form.save()
             return redirect('index')
 
     template_name = 'base/room_form.html'
-    context = {'form': form}
+    context = {'form': form, 'topics': topics}
     return render(request, template_name, context)
 
 
