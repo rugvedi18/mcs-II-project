@@ -129,13 +129,18 @@ def userProfile(request, pk):
 def createRoom(request):
     form = RoomForm
     topics = Topic.objects.all()
+
     if request.method == 'POST':
-        form = RoomForm(request.POST)
-        if form.is_valid():
-            room = form.save(commit=False)
-            room.host = request.user
-            room.save()
-            return redirect('index')
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+
+        Room.objects.create(
+            host=request.user,
+            topic=topic,
+            name=request.POST.get('name'),
+            description=request.POST.get('description'),
+        )
+        return redirect('index')
 
     template_name = 'base/room_form.html'
     context = {'form': form, 'topics': topics}
@@ -155,16 +160,15 @@ def updateRoom(request, pk):
     if request.method == 'POST':
         topic_name = request.POST.get('topic')
         topic, created = Topic.objects.get_or_create(name=topic_name)
-        form = RoomForm(request.POST, instance=room)
-        if form.is_valid():
-
-            # 5.5.56
-
-            form.save()
-            return redirect('index')
+        room.name = request.POST.get('room')
+        room.topic = topic
+        room.description = request.POST.get('description')
+        room.save()
+        return redirect('index')
 
     template_name = 'base/room_form.html'
-    context = {'form': form, 'topics': topics}
+    context = {'form': form, 'topics': topics, 'room': room}
+
     return render(request, template_name, context)
 
 
