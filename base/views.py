@@ -1,3 +1,4 @@
+from multiprocessing import context
 from unicodedata import name
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -74,7 +75,7 @@ def home(request):
         Q(description__icontains=q)
     )
 
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:5]
     room_count = rooms.count()
     room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
@@ -217,5 +218,24 @@ def updateUser(request):
 
     template_name = 'base/update_user.html'
     context = {'form': form}
+
+    return render(request, template_name, context)
+
+
+def topicsPage(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    topics = Topic.objects.filter(name__icontains=q)
+
+    template_name = 'base/topics.html'
+    context = {'topics': topics}
+
+    return render(request, template_name, context)
+
+
+def activityPage(request):
+    room_messages = Message.objects.all()
+
+    template_name = 'base/activity.html'
+    context = {'room_messages': room_messages}
 
     return render(request, template_name, context)
